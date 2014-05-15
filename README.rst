@@ -7,6 +7,22 @@ Package Setup
     pip install xlrd Bottleneck numexpr pandas scipy
     pip insatll requests pyquery
 
+
+Matplotlib
+----------
+
+.. code-block::
+
+    # source from
+    # https://downloads.sourceforge.net/project/matplotlib/matplotlib/matplotlib-1.3.1/matplotlib-1.3.1.tar.gz
+
+    wget https://github.com/matplotlib/matplotlib/pull/2623.diff
+    patch -g 0 -f -d . -p1 -i 2623.diff
+    python setup.py install
+
+
+For cairo, one needs some hack. See <https://github.com/Homebrew/homebrew/blob/master/Library/Formula/py3cairo.rb>
+
 RPy2 Installation
 -----------------
 
