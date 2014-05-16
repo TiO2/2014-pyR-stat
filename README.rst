@@ -36,7 +36,7 @@ For OSX, see issue <https://bitbucket.org/lgautier/rpy2/issue/194>.
     cd rpy2
     hg update version_2.4.x
 
-    env LDFLAGS="-L/usr/local/Cellar/r/3.0.3/R.framework/Versions/3.0/Resources/lib -L/usr/local/opt/openblas/lib" \
+    env LDFLAGS="-L/usr/local/Cellar/r/3.1.0/R.framework/Versions/3.1/Resources/lib -L/usr/local/opt/openblas/lib" \
         python3 setup.py build
     python3 setup.py install
     python3 -m 'rpy2.tests'
