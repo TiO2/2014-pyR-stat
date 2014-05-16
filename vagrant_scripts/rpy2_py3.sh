@@ -1,3 +1,4 @@
+apt-get -y install mercurial
 cd /tmp
 hg clone https://www.bitbucket.org/lgautier/rpy2
 cd rpy2
