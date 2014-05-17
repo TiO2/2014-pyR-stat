@@ -215,7 +215,7 @@
           </ul>
         </li>
         <li><i class="red">rpy2</i> - R-powered Python</li>
-        <li>Demo - survival analysis and family similarity in SNPs</li>
+        <li>Demo - survival analysis (and family similarity in SNPs)</li>
       </ul>
     </div></section>
 
@@ -296,7 +296,7 @@
         <li class="next"><i class="red">Not</i> merely mean and variance <span class="grey">(also known as descriptive statistics)</span></li>
         <li class="next"><i class="red">Sampling</i> and finding representative samples <span class="grey">(otherwise, biased)</span></li>
         <li class="next"><i class="red">Modeling</i> for the specific data structure</li>
-        <li class="next"><i class="red">Avoid over fitting</i> or complicated models <span class="grey">(model simplification)</span></li>        
+        <li class="next"><i class="red">Avoid over fitting</i> or complicated models <span class="grey">(model simplification)</span></li>
         <li class="next"><i class="red">Insights</i> about data's mean and variance <span class="grey">(or domain knowledge)</span></li>
       </ul>
       <figure class="next">
@@ -311,12 +311,12 @@
       }
     </style></section>
 
-	<section id="ipy-cover" class="slide cover w" ><div>
+	<section id="py-stat-cover" class="slide cover w" ><div>
         <h2>Statistics<br>in Python</h2>
 		<img src="pics/mid.jpg" alt="">
     </div>
     <style>
-        #ipy-cover h2 {
+        #py-stat-cover h2 {
             margin: 0px 0 0px;
             color: #D91A3C;
             text-align: left;
@@ -325,7 +325,7 @@
             opacity: 0.8;
             position: absolute;
             top: 80px;
-            left: 60px;
+            left: 80px;
         }
     </style>
     </section>
@@ -423,7 +423,7 @@ DesignMatrix with shape (2, 3)
 <code>import statsmodels.api as sm
 import statsmodels.formula.api as smf
 mod1 = smf.glm(
-    formula="y ~ x1 + x2", data=data, 
+    formula="y ~ x1 + x2", data=data,
     family=sm.families.Gaussian(sm.families.links.identity)
 ).fit()</code></pre>
   </div></section>
@@ -452,16 +452,174 @@ x2            -0.0342      0.175     -0.195      0.846        -0.378     0.310
   </div></section>
 
   <section id="py-further" class="slide"><div>
-    <h2>What's Python also good at</h2>
+    <h2>Python is also good at</h2>
     <ul>
-      <li>Heavy computation - <span class="blue">Theano</span> (GPU computation)</li>
-      <li>Simulation - <span class="blue">PyMC</span> (MCMC simulation)</li>
+      <li>Heavy computation - <span class="red">Theano</span> (GPU computation)</li>
+      <li>Simulation - <span class="red">PyMC</span> (MCMC simulation)</li>
+      <li>Machine learning - <span class="red">scikit-learn, Orange</span> (friendly vis interaction)</li>
     </ul>
+    <p>Those packages are under frequent development and expect to gain further functionality. However, R takes over when it comes to serious statistics (e.g., <i>stratified Cox Proportional Hazard regression model</i> in survival analysis).</p>
   </div></section>
 
+	<section id="rpy2-cover" class="slide cover w" ><div>
+      <h2>Statistics in R <br> through RPy2</h2>
+		<img src="pics/mid.jpg" alt="">
+    </div>
+    <style>
+        #rpy2-cover h2 {
+            margin: 0px 0 0px;
+            color: #D91A3C;
+            text-align: left;
+            font-size: 100px;
+            line-height: 1.2em;
+            opacity: 0.8;
+            position: absolute;
+            top: 80px;
+            left: 60px;
+        }
+    </style>
+  </section>
 
-  <section id="" class="slide"><div>
+  <section id="rpy2-intro" class="slide"><div>
+      <h2>Quick <span class="red">RPy2</span> Intro</h2>
+      <ul>
+        <li>As one runs rpy2, it starts an embedded R process.</li>
+        <li>Communicate with the R process through R's C API</li>
+        <li>Provide different levels of abstraction</li>
+        <li>Integrate with pandas and IPython</li>
+        <li>Graphic passing is possible</li>
+        <li>Control the embedded R by <code>rpy2.robjects.r</code> at high level</li>
+      </ul>
   </div></section>
+
+  <section id="rpy2-demo" class="slide twocol"><div>
+    <pre class="language-python3 full-page">
+<code>from rpy2 import robjects as ro
+pi_py = ro.r['pi']  # original pi is a R vector
+# &lt;FloatVector - Python:0x101974288 / R:0x7fa65157ba78&gt;
+# [3.141593]
+pi_py[0]      # 3.14159
+pi_py + 1     # [3.14, 1] Pythonic list addition
+pi_py.ro + 1  # [4.14] R vector addition
+res = ro.IntVector([1, 2, 3, 4])  # make a R int vector
+ro.r['sum'](res)  # get R's sum() function
+# &lt;IntVector - Python:0x1072c3fc8 / R:0x7fa653269b88&gt;
+# [      10]</code></pre>
+  </div></section>
+
+  <section id="rpy2-demo-fun" class="slide"><div>
+  <p class="tighter">Use R function from packages</p>
+    <pre class="language-python3">
+<code># rank(0, na.last = TRUE) from base package
+from rpy2.robjects.packages import importr
+base = importr('base')
+base.rank(0, na_last = True)  # change '.' by '_'
+base.rank(0, **{'na.last': True})  # or **kwargs form
+
+rank = ro.r['rank']
+rank(0, na_last = True)</code></pre>
+  </div></section>
+
+  <section id="rpy2-demo-pandas" class="slide"><div>
+    <p class="tighter">Pandas has its own support with rpy2</p>
+    <pre class="language-python3">
+<code># get R datasets (ex iris) into Py DataFrame
+import pandas.rpy.common as com
+iris_df = com.load_data('iris')
+type(iris_df)  # pandas.core.frame.DataFrame
+
+# Py DataFrame to R data.frame
+r_iris = com.convert_to_r_dataframe(iris_df)
+</code></pre>
+  </div></section>
+
+  <section id="rpy2-demo-numpy" class="slide"><div>
+    <pre class="language-python3 full-page">
+<code># From rpy2 to numpy
+int_vec = ro.IntVector(list(range(10)))
+
+int_np = np.array(int_vec)  # conversion by copy
+int_npnc = np.asarray(int_vec)  # conversion by reference
+
+int_np[0] = 123
+int_vec.rx(1)[0]  # 0
+
+int_npnc[0] = 123
+int_vec.rx(1)[0]  # 123
+</code></pre>
+  </div></section>
+
+  <section id="rpy2-demo-ipy" class="slide"><div>
+    <p>IPython Integration</p>
+    <pre class="language-python3 full-page">
+<code>In [1]: %load_ext rpy2.ipython  # ipython magic
+In [2]: %R c(1, 2) + 1
+Out[2]:
+&lt;FloatVector - Python:0x1031b9748 / R:0x7fa6532c37f0&gt;
+[2.000000, 3.000000]
+In [3]: a = %R c(1, 2) + 1
+In [4]: %%R
+  ....: print(head(iris))  # only show last output
+  ....: rnorm(10)</code></pre>
+  </div></section>
+
+  <section id="rpy2-demo-ipy-contd" class="slide"><div>
+    <p>IPython Integration (cont'd)</p>
+    <pre class="language-python3 full-page">
+<code>In [5]: df = pd.DataFrame({'a': [1], 'b': [2]})
+In [6]: %Rpush df  # push Py obj, numpy.array also
+Out[6]: %%R
+  ....: print(class(df))  # only show last output
+  ....: df
+      # [1] "data.frame"
+      #   a b
+      # 1 1 2
+In [7]: df_r = %Rget df   # get R obj</code></pre>
+  </div></section>
+
+	<section id="demo-cover" class="slide cover w" ><div>
+        <h2>Demo:<br>Survival Analysis</h2>
+		<img src="pics/mid.jpg" alt="">
+    </div>
+    <style>
+        #demo-cover h2 {
+            margin: 0px 0 0px;
+            color: #D91A3C;
+            text-align: left;
+            font-size: 100px;
+            line-height: 1.2em;
+            opacity: 0.8;
+            position: absolute;
+            top: 90px;
+            left: 80px;
+        }
+    </style>
+    </section>
+
+	  <section id="demo-surv-intro" class="slide" ><div>
+        <h2>What's Survival Analysis</h2>
+        <p class="tighter">This form of data has the outcome having both:</p>
+        <ul class="tighter">
+          <li>Event outcome (whether an event occurs)</li>
+          <li>Event time (how long takes an event to occur)</li>
+        </ul>
+        <p>Commonly used in medicine industry and clinical trials (Ex. Used to determine the effect of treatment on some disease)</p>
+    </div></section>
+
+    <section id="summary" class="slide"><div>
+      <h2>Summary</h2>
+      <ul>
+        <li><span class="red">Python + R</span> is a good solution to get both power of statistics and computation.</li>
+        <li><span class="red">RPy2</span> provides good support for R binding and Python scientific ecosystem.</li>
+        <li><span class="red">Statistics</span> broadens one's view about data.</li>
+        <li>PyCon rocks, so does Taiwan R MLDM Meetup :)</li>
+      </ul>
+    </div></section>
+
+  <!--
+  write r function, anonymous package
+  demo survival analysis
+  -->
 
     <!-- End Slide -->
     <section id='end' class='slide cover shout w'><div>
@@ -492,7 +650,7 @@ x2            -0.0342      0.175     -0.195      0.846        -0.378     0.310
     <script src="lib/shower/shower.min.js"></script>
     <!-- Mathjax -->
     <!-- During local development, use localhost mathjax for speed-->
-    <script src="file:///Users/liang/.ipython/profile_default/static/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!--<script src="file:///Users/liang/.ipython/profile_default/static/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>-->
     <!-- online Mathjax CDN -->
     <!--
     <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
