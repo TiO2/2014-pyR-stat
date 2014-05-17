@@ -215,7 +215,7 @@
           </ul>
         </li>
         <li><i class="red">rpy2</i> - R-powered Python</li>
-        <li>Demo - survival analysis (and family similarity in SNPs)</li>
+        <li>Demo - survival analysis</li>
       </ul>
     </div></section>
 
@@ -347,7 +347,7 @@
     <h2>Probability Distribution</h2>
     <p class="tighter">Under <span class="red">scipy.stats</span>. Take Normal distribution as example, it is <code>norm</code>. More on <a href="http://docs.scipy.org/doc/scipy/reference/tutorial/stats.html">Scipy stats tutorial</a>.</p>
     <pre class="language-python3">
-<code>from scipy.stats import norm
+<code>from scipy.stats import norm, binom
 rv = norm(loc=0, scale=1)  # fix the shape of Normal dist.
 rv.cdf(0)  # 0.5 = Pr(X ≤ 0)
 rv.pdf(-np.Inf)  # 0 = f(X = -Inf)
@@ -603,7 +603,7 @@ In [7]: df_r = %Rget df   # get R obj</code></pre>
           <li>Event outcome (whether an event occurs)</li>
           <li>Event time (how long takes an event to occur)</li>
         </ul>
-        <p>Commonly used in medicine industry and clinical trials (Ex. Used to determine the effect of treatment on some disease)</p>
+        <p>Commonly used in medicine industry and clinical trials (Ex. Used to determine the effect of treatment on some disease).<br>Python has package <i class="blue">lifeline</i> while lacks of the flexibility to combine with semi-parametric Cox regression model.</p>
     </div></section>
 
     <section id="summary" class="slide"><div>
